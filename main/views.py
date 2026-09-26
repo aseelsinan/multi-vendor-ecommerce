@@ -1,5 +1,14 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from rest_framework import generics,permissions
+from . import serializers
+from . import models
 
-def test(request):
-    return HttpResponse('Welcome From our Project')
+
+#Vendor Operations 
+class VendorList(generics.ListCreateAPIView):
+    queryset=models.Vendor.objects.all()
+    serializer_class=serializers.VendorSerialezer
+
+class VendorDetail(generics.RetrieveAPIView):
+    queryset=models.Vendor.objects.all()
+    serializer_class=serializers.VendorSerializer
+    
