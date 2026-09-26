@@ -2,21 +2,43 @@ from rest_framework import serializers
 from . import models
 
 
-from rest_framework import serializers
-from . import models
 
+
+# ----------------------------
+# Vendor Serialzers
+# ----------------------------
 class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vendor
         fields = ['id', 'user', 'address']
         
-    # إذا كنت تصر على جلب بيانات المستخدم كاملة عند القراءة (GET) فقط دون تعطيل الإنشاء (POST):
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        # سيقوم بجلب تفاصيل المستخدم بدلاً من الـ ID فقط عند عرض البيانات
         response['user'] = {
             "id": instance.user.id,
             "username": instance.user.username,
             "email": instance.user.email
         }
+        return response
+
+
+
+# ----------------------------
+# Product Serialzers
+# ----------------------------
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.Product
+        fields=['id','vendor','category','title','slug','detail','price']
+
+    def to_representation(self, instance):
+        response=super().to_representation(instance)
+        response['vendor']={
+            'user':instance.vendor.user.username
+        }
+        response['category']={
+            'title':instance.category.title
+        }
+        
         return response

@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'multivendor_ecommerce', 
         'USER': 'postgres',             
-        'PASSWORD': '123',     
+        'PASSWORD': 'root',     
         'HOST': 'localhost',            
         'PORT': '5432',                 
     }
