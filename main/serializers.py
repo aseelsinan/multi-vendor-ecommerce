@@ -15,9 +15,7 @@ class VendorSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         response = super().to_representation(instance)
         response['user'] = {
-            "id": instance.user.id,
             "username": instance.user.username,
-            "email": instance.user.email
         }
         return response
 
@@ -42,3 +40,60 @@ class ProductSerializer(serializers.ModelSerializer):
         }
         
         return response
+
+
+
+# ----------------------------
+# Customer Serializer
+# ----------------------------
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.Customer
+        fields=['user','mobile_number']
+    def to_representation(self, instance):
+        resonse= super().to_representation(instance)
+        resonse['user']={
+            'username':instance.user.username
+        }
+        return resonse
+
+
+
+
+
+
+# ----------------------------
+# Order Serializers
+# ----------------------------
+
+
+class OrderItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=models.OrderItem
+        fields=['id','order','product']
+
+    def to_representation(self,instance):
+        response=super.to_representation(instance)
+        response['oreder']=instance.order.id
+        response['product']={
+            'id':instance.product.id,
+            'title':instance.product.title,
+            'price':instance.product.price,
+            }
+        return response
+
+
+
+class OrderSerailizer(serializers.ModelSerializer):
+    order_items = OrderItemsSerializer(many=True, read_only=True)
+    class Meta:
+        model=models.Order
+        fields=['id','customer','order_at','order_items']
+
+    def to_representation(self, instance):
+        response= super().to_representation(instance)
+        response['customer']={
+            'username':instance.customer.user.username
+        }
+        return response
+

@@ -8,6 +8,8 @@ from autoslug import AutoSlugField
 # ----------------------------
 # Vendor
 # ----------------------------
+
+
 class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     address=models.TextField(null=True)
@@ -20,9 +22,11 @@ class Vendor(models.Model):
 # ----------------------------
 # Product 
 # ----------------------------
+
+
 class ProductCategory(models.Model):
     title=models.CharField(max_length=200)
-    detail=models.TextField(null=True)
+    detail=models.TextField(null=True,blank=True)
 
     def __str__(self):
         return f'{self.title}'
@@ -44,3 +48,35 @@ class Product(models.Model):
         return f'{self.title}'
 
 
+
+
+# ----------------------------
+# Customer 
+# ----------------------------
+
+
+class Customer(models.Model):
+    user=models.OneToOneField(User, related_name='customer', on_delete=models.CASCADE)
+    mobile_number=models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.user.username}'
+
+
+
+# ----------------------------
+# Order 
+# ----------------------------
+
+class Order(models.Model):
+    customer=models.ForeignKey(Customer, related_name='customer', on_delete=models.CASCADE)
+    order_at=models.DateTimeField( auto_now_add=True)
+    def __str__(self):
+        return f'Order {self.id}{self.customer.user.username}'     
+
+class OrderItem(models.Model):
+    order=models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
+    product=models.ForeignKey(Product, related_name='product', on_delete=models.CASCADE)
+    def __str__(self):
+            return f'{self.product.title}'     
+    

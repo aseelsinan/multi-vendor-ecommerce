@@ -12,9 +12,6 @@ class VendorAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'address']
     search_fields = ['user__username', 'address']
 
-
-
-
 # ----------------------------
 # Products
 # ----------------------------
@@ -26,3 +23,15 @@ class ProductAdmin(admin.ModelAdmin):
   search_fields = ['title']
 
 
+# ----------------------------
+# Customers
+# ----------------------------
+@admin.register(models.Customer)
+class CustomerAdmin(admin.ModelAdmin):
+   search_fields=['user__username']
+
+# ----------------------------
+# Orders
+# ----------------------------
+
+admin.site.register(models.Order)
