@@ -35,3 +35,4 @@ class CustomerAdmin(admin.ModelAdmin):
 # ----------------------------
 
 admin.site.register(models.Order)
+admin.site.register(models.OrderItem)

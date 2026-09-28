@@ -1,4 +1,4 @@
-from rest_framework import generics,permissions
+from rest_framework import generics,viewsets
 from . import serializers
 from . import models
 
@@ -43,7 +43,9 @@ class CustomerDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class=serializers.CustomerSerializer
 
 
-
+class CustomerAddressViewset(viewsets.ModelViewSet):
+    queryset=models.CustomerAdrees.objects.all()
+    serializer_class=serializers.CustomerAdreesSerializer
 
 # ----------------------------
 # Product views
@@ -54,7 +56,6 @@ class OrderList(generics.ListCreateAPIView):
     serializer_class=serializers.OrderSerailizer
 
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset=models.Order.objects.all()
-    serializer_class=serializers.OrderItemsSerializer
-
+   queryset = models.Order.objects.all()
+   serializer_class = serializers.OrderSerailizer
     

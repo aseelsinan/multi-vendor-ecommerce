@@ -62,8 +62,20 @@ class Customer(models.Model):
     def __str__(self):
         return f'{self.user.username}'
 
+class CustomerAdrees(models.Model):
+    customer=models.ForeignKey(Customer, on_delete=models.CASCADE)
+    address=models.TextField()
+    is_default=models.BooleanField(default=False)
+    def save(self ,*args, **kwargs):
+        if self.is_default:
+            CustomerAdrees.objects.filter(
+                customer=self.customer,is_default=True
+            ).exclude(pk=self.pk).update(is_default=False)
+        super().save(*args, **kwargs)
 
-
+    def __str__(self):
+            return f'{self.customer.user.username} - {self.address[:30]}'
+    
 # ----------------------------
 # Order 
 # ----------------------------
@@ -72,7 +84,7 @@ class Order(models.Model):
     customer=models.ForeignKey(Customer, related_name='customer', on_delete=models.CASCADE)
     order_at=models.DateTimeField( auto_now_add=True)
     def __str__(self):
-        return f'Order {self.id}{self.customer.user.username}'     
+        return f'{self.id} - {self.customer.user.username}'     
 
 class OrderItem(models.Model):
     order=models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
