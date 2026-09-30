@@ -22,13 +22,40 @@ class VendorSerializer(serializers.ModelSerializer):
 
 
 # ----------------------------
+# Product Rating And Reviews
+# ----------------------------
+class ProductReviewSerialzier(serializers.ModelSerializer):
+
+    class Meta:
+        model=models.ProductRating
+        fields=['rating', 'reviews','created_at']
+    def to_representation(self, instance):
+        repsonse= super().to_representation(instance)
+        repsonse['customer']={
+            'user':instance.customer.user.username
+        }
+        repsonse['product']={
+            'product':instance.product.title
+        }
+        return repsonse
+
+# ----------------------------
 # Product Serialzers
 # ----------------------------
 
+# Product Category
+class ProductCategorySerializer(serializers.ModelSerializer):
+    total_products = serializers.IntegerField(read_only=True)
+    class Meta:
+        model=models.ProductCategory
+        fields=['id','title','slug','icon','detail','total_products']
+
+# Product
 class ProductSerializer(serializers.ModelSerializer):
+    product_rating=ProductReviewSerialzier(many=True )
     class Meta:
         model=models.Product
-        fields=['id','vendor','category','title','slug','detail','price']
+        fields=['id','vendor','category','title','slug','detail','price','product_rating']
 
     def to_representation(self, instance):
         response=super().to_representation(instance)
@@ -43,6 +70,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 
+
+    
 # ----------------------------
 # Customer Serializer
 # ----------------------------

@@ -25,19 +25,20 @@ class Vendor(models.Model):
 
 
 class ProductCategory(models.Model):
-    title=models.CharField(max_length=200)
-    detail=models.TextField(null=True,blank=True)
-
-    def __str__(self):
-        return f'{self.title}'
+    title = models.CharField(max_length=200)
+    slug = AutoSlugField(populate_from='title', unique=True, null=True, default=None)
+    icon = models.CharField(max_length=100, blank=True, null=True, help_text="Font Awesome class, e.g. fa-solid fa-headphones")
+    detail = models.TextField(null=True, blank=True)
 
     class Meta:
-          verbose_name_plural=' Product Categories'
-    
+        verbose_name_plural = 'Product Categories'
+
+    def __str__(self):
+        return self.title    
 
 
 class Product(models.Model):
-    vendor=models.ForeignKey(Vendor, related_name='product', on_delete=models.CASCADE)
+    vendor=models.ForeignKey(Vendor, related_name='product_vendor', on_delete=models.CASCADE)
     category=models.ForeignKey(ProductCategory, related_name='product_category',null=True, on_delete=models.SET_NULL)
     title=models.CharField(max_length=200)
     slug = AutoSlugField(populate_from='title', unique=True, always_update=False)
@@ -49,7 +50,18 @@ class Product(models.Model):
 
 
 
+# ----------------------------
+# Product Rating And Reviews
+# ----------------------------
+class ProductRating(models.Model):
+     customer=models.ForeignKey('Customer',related_name='customer_rating', on_delete=models.CASCADE)
+     product=models.ForeignKey(Product, related_name='product_rating', on_delete=models.CASCADE)
+     rating =models.PositiveBigIntegerField()
+     reviews=models.TextField()
+     created_at=models.DateField( auto_now_add=True)
 
+     def __str__(self):
+          return f'{self.reviews}'
 # ----------------------------
 # Customer 
 # ----------------------------
@@ -63,7 +75,7 @@ class Customer(models.Model):
         return f'{self.user.username}'
 
 class CustomerAdrees(models.Model):
-    customer=models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer=models.ForeignKey(Customer,related_name='customer_address', on_delete=models.CASCADE)
     address=models.TextField()
     is_default=models.BooleanField(default=False)
     def save(self ,*args, **kwargs):
@@ -81,14 +93,14 @@ class CustomerAdrees(models.Model):
 # ----------------------------
 
 class Order(models.Model):
-    customer=models.ForeignKey(Customer, related_name='customer', on_delete=models.CASCADE)
+    customer=models.ForeignKey(Customer, related_name='order_customer', on_delete=models.CASCADE)
     order_at=models.DateTimeField( auto_now_add=True)
     def __str__(self):
         return f'{self.id} - {self.customer.user.username}'     
 
 class OrderItem(models.Model):
     order=models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)
-    product=models.ForeignKey(Product, related_name='product', on_delete=models.CASCADE)
+    product=models.ForeignKey(Product, related_name='order_product', on_delete=models.CASCADE)
     def __str__(self):
             return f'{self.product.title}'     
     

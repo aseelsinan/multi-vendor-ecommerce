@@ -23,6 +23,7 @@ class ProductAdmin(admin.ModelAdmin):
   search_fields = ['title']
 
 
+admin.site.register(models.ProductRating)
 # ----------------------------
 # Customers
 # ----------------------------

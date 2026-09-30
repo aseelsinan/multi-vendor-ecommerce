@@ -1,3 +1,4 @@
+from django.db.models import Count
 from rest_framework import generics,viewsets
 from . import serializers
 from . import models
@@ -19,6 +20,18 @@ class VendorDetail(generics.RetrieveUpdateDestroyAPIView):
 # ----------------------------
 # Product Views
 # ----------------------------
+
+class ProducCategorytList(generics.ListCreateAPIView):
+    queryset=models.ProductCategory.objects.all()
+    queryset = models.ProductCategory.objects.annotate(
+        total_products=Count('product_category')  
+    )
+    serializer_class=serializers.ProductCategorySerializer
+class ProductCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset=models.ProductCategory.objects.all()
+    serializer_class=serializers.ProductCategorySerializer
+    lookup_field='slug'
+
 
 class ProductList(generics.ListCreateAPIView):
     queryset=models.Product.objects.all()
@@ -58,4 +71,10 @@ class OrderList(generics.ListCreateAPIView):
 class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
    queryset = models.Order.objects.all()
    serializer_class = serializers.OrderSerailizer
-    
+
+# ----------------------------
+# Product Rating views
+# ----------------------------
+class ProductRatingViewset(viewsets.ModelViewSet):
+    queryset=models.ProductRating.objects.all()
+    serializer_class=serializers.ProductReviewSerialzier
